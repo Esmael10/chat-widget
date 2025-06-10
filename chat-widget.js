@@ -550,8 +550,8 @@
             }
         },
         style: {
-            primaryColor: '#10b981', // Green
-            secondaryColor: '#059669', // Darker green
+            primaryColor: '#0ea5e9', // Green
+            secondaryColor: '#0369a1', // Darker green
             position: 'right',
             backgroundColor: '#ffffff',
             fontColor: '#1f2937'
@@ -568,8 +568,8 @@
                 ...defaultSettings.style, 
                 ...window.ChatWidgetConfig.style,
                 // Force green colors if user provided purple
-                primaryColor: window.ChatWidgetConfig.style?.primaryColor === '#854fff' ? '#10b981' : (window.ChatWidgetConfig.style?.primaryColor || '#10b981'),
-                secondaryColor: window.ChatWidgetConfig.style?.secondaryColor === '#6b3fd4' ? '#059669' : (window.ChatWidgetConfig.style?.secondaryColor || '#059669')
+primaryColor: window.ChatWidgetConfig.style?.primaryColor || defaultSettings.style.primaryColor,
+secondaryColor: window.ChatWidgetConfig.style?.secondaryColor || defaultSettings.style.secondaryColor,
             },
             suggestedQuestions: window.ChatWidgetConfig.suggestedQuestions || defaultSettings.suggestedQuestions
         } : defaultSettings;
