@@ -550,6 +550,14 @@
             autoResizeTextarea();
         }
 
+        /* --- Body & Scroll Fix --- */
+.chat-assist-widget .chat-body {
+    flex: 1; /* Make it fill the available space */
+    display: flex; /* This is overridden by JS, which is fine */
+    flex-direction: column;
+    min-height: 0; /* Crucial fix for flexbox scrolling */
+}
+
         const typingIndicator = createTypingIndicator();
         messagesContainer.appendChild(typingIndicator);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
