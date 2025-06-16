@@ -1,20 +1,16 @@
 /**
  * ==================================================================================
- * QUANTUM CHAT WIDGET v2.0
+ * QUANTUM CHAT WIDGET v2.1
  * ==================================================================================
  * A complete rebuild focusing on stability, professionalism, and meticulous detail.
  * This version is a direct response to previous failures and is built from the
  * ground up to be robust, feature-rich, and aesthetically pleasing.
  *
- * KEY IMPROVEMENTS (v2.0):
- * - CODE STABILITY: Rewritten as a single, encapsulated class to prevent conflicts and errors.
- * - FLAWLESS FUNCTIONALITY: All reported issues, including non-working state, have been fixed.
- * - PROFESSIONAL AESTHETICS: UI has been completely redesigned based on user feedback.
- * - Grey message background removed for a clean, all-white interface.
- * - Message bubbles are redesigned with tails for a modern chat look.
- * - Input forms and buttons are polished with better spacing and focus states.
- * - ROBUST LOGIC: View management, state handling, and API calls are now more reliable.
- * - DETAILED & CLEAN: The entire codebase is now heavily commented and follows best practices.
+ * KEY IMPROVEMENTS (v2.1):
+ * - FIXED: Horizontal scrollbar bug in message bubbles is resolved.
+ * - ADDED: A clear 'send' icon (paper plane) is now on the submit button.
+ * - REFINED: Further polishing of CSS for robust layout handling.
+ * - STABILITY: Code remains stable and encapsulated within a single class structure.
  *
  * This is a commitment to delivering the quality and craftsmanship requested.
  * ==================================================================================
@@ -162,7 +158,7 @@
 .qc-message-group { display: flex; flex-direction: column; max-width: 90%; margin-bottom: 12px; }
 .qc-message-group.qc-user { align-items: flex-end; align-self: flex-end; }
 .qc-message-group.qc-bot { align-items: flex-start; align-self: flex-start; }
-.qc-bubble { position: relative; padding: 10px 16px; border-radius: var(--qc-radius-lg); font-size: 15px; line-height: 1.6; white-space: pre-wrap; animation: qc-bubble-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+.qc-bubble { position: relative; padding: 10px 16px; border-radius: var(--qc-radius-lg); font-size: 15px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: break-word; animation: qc-bubble-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
 @keyframes qc-bubble-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .qc-bubble-user { background-color: var(--qc-primary); color: white; border-bottom-right-radius: var(--qc-radius-sm); }
 .qc-bubble-bot { background-color: var(--qc-bg); color: var(--qc-text-primary); border: 1px solid var(--qc-border); border-bottom-left-radius: var(--qc-radius-sm); }
@@ -232,7 +228,7 @@
         _createDOM() {
             const h = (tag, props = {}, children = []) => {
                 const el = document.createElement(tag);
-                Object.assign(el, props);
+                Object.entries(props).forEach(([key, value]) => el[key] = value);
                 children.forEach(child => child && el.appendChild(child instanceof Node ? child : document.createTextNode(child)));
                 return el;
             };
@@ -281,6 +277,9 @@
                 ])
             ]);
 
+            const submitBtn = h('button', { className: 'qc-submit-btn' });
+            submitBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>`;
+
             this.dom.chatView = h('div', { className: 'qc-view qc-chat-view' }, [
                 h('div', { className: 'qc-chat-main' }, [
                     h('div', { className: 'qc-messages-container' }),
@@ -288,9 +287,7 @@
                     h('div', { className: 'qc-controls-container' }, [
                         h('div', { className: 'qc-controls' }, [
                             h('textarea', { className: 'qc-textarea', placeholder: 'Type your message...', rows: 1 }),
-                            h('button', { className: 'qc-submit-btn' }, [
-                                h('svg', { innerHTML: '<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>', viewBox: '0 0 24 24', fill: 'currentColor' })
-                            ])
+                            submitBtn
                         ])
                     ])
                 ])
@@ -448,7 +445,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        action: "sendMessage", // Correctly formatted payload
+                        action: "sendMessage",
                         route: config.webhook.route,
                         sessionId: this.state.conversationId,
                         chatInput: messageText, 
