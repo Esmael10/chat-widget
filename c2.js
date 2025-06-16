@@ -1,18 +1,15 @@
 /**
  * ==================================================================================
- * QUANTUM CHAT WIDGET v2.1
+ * QUANTUM CHAT WIDGET v2.2
  * ==================================================================================
- * A complete rebuild focusing on stability, professionalism, and meticulous detail.
- * This version is a direct response to previous failures and is built from the
- * ground up to be robust, feature-rich, and aesthetically pleasing.
+ * A professional, feature-rich, and highly-detailed embeddable chat widget.
  *
- * KEY IMPROVEMENTS (v2.1):
- * - FIXED: Horizontal scrollbar bug in message bubbles is resolved.
- * - ADDED: A clear 'send' icon (paper plane) is now on the submit button.
- * - REFINED: Further polishing of CSS for robust layout handling.
- * - STABILITY: Code remains stable and encapsulated within a single class structure.
+ * KEY IMPROVEMENTS (v2.2):
+ * - FINAL FIX: Forcefully resolved the horizontal scrollbar issue in message bubbles
+ * by implementing a more robust word-breaking rule.
+ * - STABILITY: All other features and code structure from v2.1 remain stable.
  *
- * This is a commitment to delivering the quality and craftsmanship requested.
+ * This version specifically targets the last remaining layout bug for a polished finish.
  * ==================================================================================
  */
 (function() {
@@ -158,7 +155,19 @@
 .qc-message-group { display: flex; flex-direction: column; max-width: 90%; margin-bottom: 12px; }
 .qc-message-group.qc-user { align-items: flex-end; align-self: flex-end; }
 .qc-message-group.qc-bot { align-items: flex-start; align-self: flex-start; }
-.qc-bubble { position: relative; padding: 10px 16px; border-radius: var(--qc-radius-lg); font-size: 15px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: break-word; animation: qc-bubble-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+
+/* FIXED: Horizontal scrollbar issue */
+.qc-bubble { 
+    position: relative; 
+    padding: 10px 16px; 
+    border-radius: var(--qc-radius-lg); 
+    font-size: 15px; 
+    line-height: 1.6; 
+    white-space: pre-wrap; 
+    overflow-wrap: break-word; 
+    word-break: break-word; /* Ensures long words wrap */
+    animation: qc-bubble-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+}
 @keyframes qc-bubble-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .qc-bubble-user { background-color: var(--qc-primary); color: white; border-bottom-right-radius: var(--qc-radius-sm); }
 .qc-bubble-bot { background-color: var(--qc-bg); color: var(--qc-text-primary); border: 1px solid var(--qc-border); border-bottom-left-radius: var(--qc-radius-sm); }
@@ -276,7 +285,7 @@
                     h('button', { className: 'qc-btn qc-continue-btn', type: 'submit' }, ['Continue'])
                 ])
             ]);
-
+            
             const submitBtn = h('button', { className: 'qc-submit-btn' });
             submitBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>`;
 
