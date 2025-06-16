@@ -1,17 +1,18 @@
 /**
  * ==================================================================================
- * QUANTUM CHAT WIDGET v1.1
+ * QUANTUM CHAT WIDGET v1.2
  * ==================================================================================
  * A professional, feature-rich, and highly-detailed embeddable chat widget.
  *
- * CHANGE LOG (v1.1):
- * - REMOVED: "Powered by" footer has been completely removed as requested.
+ * CHANGE LOG (v1.2):
+ * - REMOVED: "Powered by" footer has been completely removed.
  * - REDESIGNED: Message bubbles now have a more professional, modern look with tails.
  * - REFINED: Input area has been redesigned for a cleaner, more integrated feel.
  * - ENHANCED: Header now includes a subtle gradient and an online status indicator.
  * - IMPROVED: Animations and micro-interactions are smoother and more purposeful.
  * - POLISHED: A full review of spacing, typography, and visual hierarchy.
  * - STRUCTURED: Codebase is now even more detailed and well-commented.
+ * - FIXED: Removed grey background from message area for a cleaner, all-white look.
  *
  * This version is a direct response to user feedback for a higher standard of
  * quality, detail, and professional aesthetics.
@@ -68,9 +69,9 @@
 
     /* Light Theme Palette */
     --qc-bg-light: #ffffff;
-    --qc-surface-light: #f4f5f7;
+    --qc-surface-light: #ffffff; /* Set to white to remove grey background */
     --qc-border-light: #e5e7eb;
-    --qc-header-bg-light: #f9fafb;
+    --qc-header-bg-light: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
     --qc-header-text-light: #111827;
     --qc-text-primary-light: #1f2937;
     --qc-text-secondary-light: #6b7280;
@@ -194,7 +195,7 @@
     height: 12px;
     background-color: var(--qc-online-indicator);
     border-radius: 50%;
-    border: 2px solid var(--qc-header-bg);
+    border: 2px solid var(--qc-bg);
 }
 .qc-header-text-container { display: flex; flex-direction: column; }
 .qc-header-title { font-size: 18px; font-weight: 700; color: var(--qc-header-text); }
@@ -225,7 +226,7 @@
     padding: 12px 16px;
     border: 1px solid var(--qc-border);
     border-radius: var(--qc-radius-md);
-    background-color: var(--qc-surface);
+    background-color: var(--qc-bg);
     color: var(--qc-text-primary);
     font-family: inherit;
     font-size: 15px;
@@ -636,4 +637,4 @@
         new QuantumChatWidget();
     }
 
-})();
+})
