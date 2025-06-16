@@ -120,6 +120,14 @@
             color: var(--text-primary);
         }
         
+        /* --- CORRECTED LOCATION FOR SCROLL FIX --- */
+        .chat-assist-widget .chat-body {
+            flex: 1; /* Make it fill the available space */
+            display: flex;
+            flex-direction: column;
+            min-height: 0; /* Crucial fix for flexbox scrolling */
+        }
+        
         /* --- Welcome Screen & Registration --- */
         .chat-assist-widget .chat-welcome, .chat-assist-widget .user-registration {
             flex: 1;
@@ -364,31 +372,11 @@
     `;
     document.head.appendChild(widgetStyles);
 
-    // Default configuration (DO NOT EDIT THE LOGIC BELOW)
-    // ... the rest of the JS logic remains the same ...
-
+    // Default configuration
     const defaultSettings = {
-        webhook: {
-            url: '',
-            route: ''
-        },
-        branding: {
-            logo: '',
-            name: '',
-            welcomeText: '',
-            responseTimeText: '',
-            poweredBy: {
-                text: '',
-                link: ''
-            }
-        },
-        style: {
-            primaryColor: '#007bff', 
-            secondaryColor: '#0056b3',
-            position: 'right',
-            backgroundColor: '#ffffff',
-            fontColor: '#212529'
-        },
+        webhook: { url: '', route: '' },
+        branding: { logo: '', name: '', welcomeText: '', responseTimeText: '', poweredBy: { text: '', link: '' } },
+        style: { primaryColor: '#007bff', secondaryColor: '#0056b3', position: 'right', backgroundColor: '#ffffff', fontColor: '#212529' },
         suggestedQuestions: []
     };
 
@@ -397,12 +385,7 @@
         {
             webhook: { ...defaultSettings.webhook, ...window.ChatWidgetConfig.webhook },
             branding: { ...defaultSettings.branding, ...window.ChatWidgetConfig.branding },
-            style: { 
-                ...defaultSettings.style, 
-                ...window.ChatWidgetConfig.style,
-                primaryColor: window.ChatWidgetConfig.style?.primaryColor || defaultSettings.style.primaryColor,
-                secondaryColor: window.ChatWidgetConfig.style?.secondaryColor || defaultSettings.style.secondaryColor,
-            },
+            style: { ...defaultSettings.style, ...window.ChatWidgetConfig.style },
             suggestedQuestions: window.ChatWidgetConfig.suggestedQuestions || defaultSettings.suggestedQuestions
         } : defaultSettings;
 
@@ -414,49 +397,18 @@
     const widgetRoot = document.createElement('div');
     widgetRoot.className = 'chat-assist-widget';
     
-    // Apply custom colors from settings if needed
     widgetRoot.style.setProperty('--accent-primary', settings.style.primaryColor);
     widgetRoot.style.setProperty('--accent-secondary', settings.style.secondaryColor);
 
-    // Create chat panel
     const chatWindow = document.createElement('div');
     chatWindow.className = `chat-window ${settings.style.position === 'left' ? 'left-side' : 'right-side'}`;
     
-    const welcomeScreenHTML = `
+    chatWindow.innerHTML = `
         <div class="chat-header">
-            <img class="chat-header-logo" src="${settings.branding.logo}" alt="${settings.branding.name}">
-            <span class="chat-header-title">${settings.branding.name}</span>
+            <img class="chat-header-logo" src="${settings.branding.logo}" alt="${settings.branding.name || 'Logo'}">
+            <span class="chat-header-title">${settings.branding.name || 'Chat'}</span>
             <button class="chat-close-btn">×</button>
         </div>
-        <div class="chat-welcome">
-            <h2 class="chat-welcome-title">${settings.branding.welcomeText}</h2>
-            <button class="chat-start-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                Start chatting
-            </button>
-            <p class="chat-response-time">${settings.branding.responseTimeText}</p>
-        </div>
-        <div class="user-registration" style="display: none;">
-            <form class="registration-form">
-                <h2 class="registration-title">Please enter your details to start</h2>
-                <div class="form-field">
-                    <label class="form-label" for="chat-user-name">Name</label>
-                    <input type="text" id="chat-user-name" class="form-input" placeholder="Your name" required>
-                    <div class="error-text" id="name-error"></div>
-                </div>
-                <div class="form-field">
-                    <label class="form-label" for="chat-user-email">Email</label>
-                    <input type="email" id="chat-user-email" class="form-input" placeholder="Your email address" required>
-                    <div class="error-text" id="email-error"></div>
-                </div>
-                <button type="submit" class="submit-registration">Continue to Chat</button>
-            </form>
-        </div>
-    `;
-
-    const chatInterfaceHTML = `
         <div class="chat-body" style="display: none;">
             <div class="chat-messages"></div>
             <div class="chat-controls">
@@ -466,75 +418,47 @@
                 </button>
             </div>
             <div class="chat-footer">
-                ${settings.branding.poweredBy.text ? `<a class="chat-footer-link" href="${settings.branding.poweredBy.link}" target="_blank">${settings.branding.poweredBy.text}</a>` : ''}
+                ${settings.branding.poweredBy.text ? `<a class="chat-footer-link" href="${settings.branding.poweredBy.link || '#'}" target="_blank">${settings.branding.poweredBy.text}</a>` : ''}
             </div>
+        </div>
+        <div class="chat-welcome">
+            <h2 class="chat-welcome-title">${settings.branding.welcomeText || 'Welcome!'}</h2>
+            <button class="chat-start-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Start chatting
+            </button>
+            <p class="chat-response-time">${settings.branding.responseTimeText || ''}</p>
+        </div>
+        <div class="user-registration" style="display: none;">
+            <form class="registration-form">
+                <h2 class="registration-title">Please enter your details to start</h2>
+                <div class="form-field"><label class="form-label" for="chat-user-name">Name</label><input type="text" id="chat-user-name" class="form-input" placeholder="Your name" required><div class="error-text" id="name-error"></div></div>
+                <div class="form-field"><label class="form-label" for="chat-user-email">Email</label><input type="email" id="chat-user-email" class="form-input" placeholder="Your email address" required><div class="error-text" id="email-error"></div></div>
+                <button type="submit" class="submit-registration">Continue to Chat</button>
+            </form>
         </div>
     `;
     
-    chatWindow.innerHTML = welcomeScreenHTML + chatInterfaceHTML;
-    
     const launchButton = document.createElement('button');
     launchButton.className = `chat-launcher ${settings.style.position === 'left' ? 'left-side' : 'right-side'}`;
-    launchButton.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M4.913 2.658c.792-.452 1.743-.485 2.54.044l11.25 6.25a2.25 2.25 0 0 1 0 4.102l-11.25 6.25c-.797.53-1.748.5-2.54.044A2.25 2.25 0 0 1 3.75 18V6a2.25 2.25 0 0 1 1.163-1.942Z" /></svg>
-        <span class="chat-launcher-text">Need help?</span>`;
+    launchButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M21.75 9.063c.428 0 .822.195.975.552a.75.75 0 0 1-.322.923l-8.62 4.926c-.39.223-.87.223-1.26 0l-8.62-4.926a.75.75 0 0 1 .653-1.475l8.445 4.826 8.445-4.826a.75.75 0 0 1 .284-.052ZM21.75 12.813c.428 0 .822.195.975.552a.75.75 0 0 1-.322.923l-8.62 4.926c-.39.223-.87.223-1.26 0l-8.62-4.926a.75.75 0 0 1 .653-1.475l8.445 4.826 8.445-4.826a.75.75 0 0 1 .284-.052Z" /></svg>`;
     
     widgetRoot.appendChild(chatWindow);
     widgetRoot.appendChild(launchButton);
     document.body.appendChild(widgetRoot);
 
-    const startChatButton = chatWindow.querySelector('.chat-start-btn');
-    const chatBody = chatWindow.querySelector('.chat-body');
-    const messagesContainer = chatWindow.querySelector('.chat-messages');
-    const messageTextarea = chatWindow.querySelector('.chat-textarea');
-    const sendButton = chatWindow.querySelector('.chat-submit');
+    const get = (selector) => chatWindow.querySelector(selector);
+    const messagesContainer = get('.chat-messages');
+    const messageTextarea = get('.chat-textarea');
     
-    const registrationForm = chatWindow.querySelector('.registration-form');
-    const userRegistration = chatWindow.querySelector('.user-registration');
-    const chatWelcome = chatWindow.querySelector('.chat-welcome');
-    const nameInput = chatWindow.querySelector('#chat-user-name');
-    const emailInput = chatWindow.querySelector('#chat-user-email');
-    const nameError = chatWindow.querySelector('#name-error');
-    const emailError = chatWindow.querySelector('#email-error');
-
     function createSessionId() { return crypto.randomUUID(); }
-
-    function createTypingIndicator() {
-        const indicator = document.createElement('div');
-        indicator.className = 'typing-indicator';
-        indicator.innerHTML = `<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
-        return indicator;
-    }
-
-    function linkifyText(text) {
-        const urlPattern = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-        return text.replace(urlPattern, url => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${url}</a>`);
-    }
-
-    function showRegistrationForm() {
-        chatWelcome.style.display = 'none';
-        userRegistration.style.display = 'flex';
-    }
-
+    function linkifyText(text) { return text.replace(/(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim, url => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${url}</a>`); }
     function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function autoResizeTextarea() { messageTextarea.style.height = 'auto'; messageTextarea.style.height = `${messageTextarea.scrollHeight}px`; }
 
-    async function handleRegistration(event) {
-        event.preventDefault();
-        
-        nameError.textContent = '';
-        emailError.textContent = '';
-        let isValid = true;
-        if (!nameInput.value.trim()) { nameError.textContent = 'Please enter your name'; isValid = false; }
-        if (!isValidEmail(emailInput.value.trim())) { emailError.textContent = 'Please enter a valid email'; isValid = false; }
-        
-        if (!isValid) return;
-        
-        conversationId = createSessionId();
-        
-        userRegistration.style.display = 'none';
-        chatBody.style.display = 'flex';
-
-        submitMessage(`New chat started.\nName: ${nameInput.value.trim()}\nEmail: ${emailInput.value.trim()}`, true);
+    function showView(view) {
+        ['.chat-welcome', '.user-registration', '.chat-body'].forEach(v => get(v).style.display = 'none');
+        get(view).style.display = 'flex';
     }
 
     async function submitMessage(messageText, isHidden = false) {
@@ -550,15 +474,9 @@
             autoResizeTextarea();
         }
 
-        /* --- Body & Scroll Fix --- */
-.chat-assist-widget .chat-body {
-    flex: 1; /* Make it fill the available space */
-    display: flex; /* This is overridden by JS, which is fine */
-    flex-direction: column;
-    min-height: 0; /* Crucial fix for flexbox scrolling */
-}
-
-        const typingIndicator = createTypingIndicator();
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = `<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
         messagesContainer.appendChild(typingIndicator);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
@@ -571,16 +489,16 @@
                     sessionId: conversationId,
                     route: settings.webhook.route,
                     chatInput: messageText,
-                    metadata: { userId: emailInput.value.trim(), userName: nameInput.value.trim() }
+                    metadata: { userId: get('#chat-user-email').value, userName: get('#chat-user-name').value }
                 })
             });
             const responseData = await response.json();
             
-            messagesContainer.removeChild(typingIndicator);
+            typingIndicator.remove();
             
             const botMessage = document.createElement('div');
             botMessage.className = 'chat-bubble bot-bubble';
-            const responseText = Array.isArray(responseData) ? responseData[0].output : responseData.output;
+            const responseText = Array.isArray(responseData) && responseData[0] ? responseData[0].output : responseData.output || "Sorry, I didn't get that.";
             botMessage.innerHTML = linkifyText(responseText);
             messagesContainer.appendChild(botMessage);
 
@@ -603,7 +521,7 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
             console.error('Message submission error:', error);
-            if(messagesContainer.contains(typingIndicator)) messagesContainer.removeChild(typingIndicator);
+            if(typingIndicator.parentNode) typingIndicator.remove();
             const errorMessage = document.createElement('div');
             errorMessage.className = 'chat-bubble bot-bubble';
             errorMessage.textContent = "Sorry, an error occurred. Please try again.";
@@ -613,16 +531,30 @@
         }
     }
 
-    function autoResizeTextarea() {
-        messageTextarea.style.height = 'auto';
-        messageTextarea.style.height = `${messageTextarea.scrollHeight}px`;
-    }
+    get('.chat-start-btn').addEventListener('click', () => showView('.user-registration'));
+    
+    get('.registration-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        let isValid = true;
+        const nameInput = get('#chat-user-name');
+        const emailInput = get('#chat-user-email');
+        get('#name-error').textContent = '';
+        get('#email-error').textContent = '';
+        if (!nameInput.value.trim()) { get('#name-error').textContent = 'Please enter your name'; isValid = false; }
+        if (!isValidEmail(emailInput.value.trim())) { get('#email-error').textContent = 'Please enter a valid email'; isValid = false; }
+        
+        if (!isValid) return;
+        
+        conversationId = createSessionId();
+        showView('.chat-body');
+        submitMessage(`New chat started by ${nameInput.value.trim()}.`, true);
+    });
 
-    startChatButton.addEventListener('click', showRegistrationForm);
-    registrationForm.addEventListener('submit', handleRegistration);
-    sendButton.addEventListener('click', () => { if (messageTextarea.value.trim()) submitMessage(messageTextarea.value.trim()); });
+    get('.chat-submit').addEventListener('click', () => { if (messageTextarea.value.trim()) submitMessage(messageTextarea.value.trim()); });
     messageTextarea.addEventListener('input', autoResizeTextarea);
-    messageTextarea.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendButton.click(); } });
+    messageTextarea.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); get('.chat-submit').click(); } });
     launchButton.addEventListener('click', () => chatWindow.classList.toggle('visible'));
-    chatWindow.querySelector('.chat-close-btn').addEventListener('click', () => chatWindow.classList.remove('visible'));
+    get('.chat-close-btn').addEventListener('click', () => chatWindow.classList.remove('visible'));
+
+    showView('.chat-welcome');
 })();
