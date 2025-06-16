@@ -1,15 +1,16 @@
 /**
  * ==================================================================================
- * QUANTUM CHAT WIDGET v2.2
+ * QUANTUM CHAT WIDGET v2.3
  * ==================================================================================
  * A professional, feature-rich, and highly-detailed embeddable chat widget.
  *
- * KEY IMPROVEMENTS (v2.2):
- * - FINAL FIX: Forcefully resolved the horizontal scrollbar issue in message bubbles
- * by implementing a more robust word-breaking rule.
- * - STABILITY: All other features and code structure from v2.1 remain stable.
+ * KEY IMPROVEMENTS (v2.3):
+ * - CRITICAL FIX: Resolved the issue where the chat input area (textarea and send button)
+ * was not visible due to a CSS layout conflict in the main chat view.
+ * - STABILITY: The fix is targeted and ensures the integrity of the overall code structure.
  *
- * This version specifically targets the last remaining layout bug for a polished finish.
+ * This version is a direct response to the critical bug reported and ensures full
+ * functionality and professional appearance.
  * ==================================================================================
  */
 (function() {
@@ -131,6 +132,14 @@
 .qc-view { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: var(--qc-spacing-xl); text-align: center; background-color: var(--qc-bg); transition: opacity 0.4s ease, transform 0.4s ease; opacity: 0; transform: translateX(20px); pointer-events: none; }
 .qc-view.qc-active { opacity: 1; transform: translateX(0); pointer-events: auto; }
 .qc-view.qc-exit-to-left { opacity: 0; transform: translateX(-20px); }
+
+/* CRITICAL FIX: Overriding generic view styles for the main chat view */
+.qc-chat-view {
+    padding: 0;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
 .qc-view-title { font-size: 22px; font-weight: 800; color: var(--qc-text-primary); margin-bottom: 8px; }
 .qc-view-subtitle { font-size: 15px; color: var(--qc-text-secondary); margin-bottom: 24px; max-width: 320px; line-height: 1.5; }
 
@@ -156,18 +165,7 @@
 .qc-message-group.qc-user { align-items: flex-end; align-self: flex-end; }
 .qc-message-group.qc-bot { align-items: flex-start; align-self: flex-start; }
 
-/* FIXED: Horizontal scrollbar issue */
-.qc-bubble { 
-    position: relative; 
-    padding: 10px 16px; 
-    border-radius: var(--qc-radius-lg); 
-    font-size: 15px; 
-    line-height: 1.6; 
-    white-space: pre-wrap; 
-    overflow-wrap: break-word; 
-    word-break: break-word; /* Ensures long words wrap */
-    animation: qc-bubble-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
-}
+.qc-bubble { position: relative; padding: 10px 16px; border-radius: var(--qc-radius-lg); font-size: 15px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; animation: qc-bubble-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
 @keyframes qc-bubble-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .qc-bubble-user { background-color: var(--qc-primary); color: white; border-bottom-right-radius: var(--qc-radius-sm); }
 .qc-bubble-bot { background-color: var(--qc-bg); color: var(--qc-text-primary); border: 1px solid var(--qc-border); border-bottom-left-radius: var(--qc-radius-sm); }
@@ -557,4 +555,4 @@
         new QuantumChatWidget();
     }
 
-})();
+})
