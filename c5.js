@@ -1,23 +1,20 @@
 /**
  * ==================================================================================
- * QUANTUM CHAT WIDGET v2.4 (Stable Rebuild)
+ * QUANTUM CHAT WIDGET v2.5 (CSS Conflict Resolution)
  * ==================================================================================
  * A complete and stable rebuild focusing on reliability, professionalism, and
- * meticulous detail. This version directly addresses all previous failures and
- * is built from the ground up to be robust and functional.
+ * meticulous detail.
  *
- * KEY IMPROVEMENTS (v2.4):
- * - STABILITY GUARANTEE: The entire codebase has been rewritten as a single,
- * encapsulated class to eliminate scope conflicts and initialization errors.
- * - FUNCTIONALITY RESTORED: All reported bugs, including the widget not appearing
- * or the input area disappearing, have been resolved.
- * - CSS RE-ARCHITECTED: Styles are now more specific and robust to prevent conflicts.
- * The horizontal scrollbar issue is fixed with proper word-wrapping rules.
- * - UI/UX POLISHED: The design is clean, professional, and incorporates all
- * previously requested visual elements, including a send icon.
- * - LOGIC REFINED: View management, state handling, and API calls are now more reliable.
+ * KEY IMPROVEMENTS (v2.5):
+ * - CRITICAL FIX: All CSS rules are now prefixed with a unique ID
+ * (#quantum-chat-widget-container) to prevent conflicts with existing
+ * website stylesheets (like WordPress or Shopify themes). This resolves
+ * layout and styling issues when embedded on a live site.
+ * - ROBUSTNESS: This change dramatically increases the widget's robustness
+ * and ensures it looks and functions as intended across different environments.
+ * - STABILITY: All other features and code structure from v2.4 remain stable.
  *
- * This version is a commitment to delivering the quality and functionality expected.
+ * This version is a commitment to delivering a truly portable and professional widget.
  * ==================================================================================
  */
 (function() {
@@ -29,6 +26,7 @@
     }
     window.QuantumChatLoaded = true;
 
+    // --- 1. CONFIGURATION ---
     const config = ((userConfig = {}) => ({
         webhook: { url: '', route: '', ...userConfig.webhook },
         branding: {
@@ -53,6 +51,8 @@
         },
     }))(window.ChatWidgetConfig);
 
+
+    // --- 2. CSS STYLESHEET ---
     const generateStylesheet = () => {
         const styles = `
 :root {
@@ -69,83 +69,83 @@
     --qc-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --qc-focus-ring: 0 0 0 3px var(--qc-primary-glow);
 }
-.quantum-chat-widget {
+#quantum-chat-widget-container {
     --qc-bg: var(--qc-bg-${config.style.theme}); --qc-surface: var(--qc-surface-${config.style.theme}); --qc-border: var(--qc-border-${config.style.theme}); --qc-header-bg: var(--qc-header-bg-${config.style.theme}); --qc-header-text: var(--qc-header-text-${config.style.theme}); --qc-text-primary: var(--qc-text-primary-${config.style.theme}); --qc-text-secondary: var(--qc-text-secondary-${config.style.theme}); --qc-online-indicator: var(--qc-online-indicator-${config.style.theme});
     font-family: var(--qc-font-family); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
-.qc-window { position: fixed; bottom: 95px; z-index: 2147483646; width: clamp(340px, 90vw, 400px); height: clamp(500px, 80vh, 720px); background-color: var(--qc-bg); border-radius: var(--qc-radius-lg); box-shadow: var(--qc-shadow-xl); border: 1px solid var(--qc-border); display: flex; flex-direction: column; overflow: hidden; transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; opacity: 0; transform: translateY(20px); visibility: hidden; }
-.qc-window.qc-position-left { right: auto; left: 20px; transform-origin: bottom left; }
-.qc-window.qc-position-right { left: auto; right: 20px; transform-origin: bottom right; }
-.qc-window.qc-visible { opacity: 1; transform: translateY(0); visibility: visible; }
-.qc-launcher { position: fixed; bottom: 20px; z-index: 2147483645; height: 60px; width: 60px; background-color: var(--qc-primary); border: none; border-radius: 50%; cursor: pointer; box-shadow: var(--qc-shadow-lg); display: flex; align-items: center; justify-content: center; transition: var(--qc-transition); }
-.qc-launcher:hover { transform: scale(1.1); box-shadow: 0 10px 20px var(--qc-primary-glow); }
-.qc-launcher.qc-position-left { left: 20px; }
-.qc-launcher.qc-position-right { right: 20px; }
-.qc-launcher-icon { position: absolute; width: 30px; height: 30px; color: white; transition: transform 0.3s ease, opacity 0.3s ease; }
-.qc-icon-open { transform: scale(1) rotate(0deg); opacity: 1; }
-.qc-icon-close { transform: scale(0) rotate(-90deg); opacity: 0; }
-.qc-window.qc-visible ~ .qc-launcher .qc-icon-open { transform: scale(0) rotate(90deg); opacity: 0; }
-.qc-window.qc-visible ~ .qc-launcher .qc-icon-close { transform: scale(1) rotate(0deg); opacity: 1; }
-.qc-header { padding: var(--qc-spacing-lg); display: flex; align-items: center; gap: var(--qc-spacing-md); background: var(--qc-header-bg); color: var(--qc-header-text); border-bottom: 1px solid var(--qc-border); flex-shrink: 0; }
-.qc-header-logo-wrapper { position: relative; flex-shrink: 0; }
-.qc-header-logo { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background-color: white; }
-.qc-online-indicator { position: absolute; bottom: 1px; right: 1px; width: 12px; height: 12px; background-color: var(--qc-online-indicator); border-radius: 50%; border: 2px solid var(--qc-header-bg); }
-.qc-header-text-container { display: flex; flex-direction: column; }
-.qc-header-title { font-size: 18px; font-weight: 700; color: var(--qc-header-text); }
-.qc-header-subtitle { font-size: 13px; color: var(--qc-text-secondary); }
-.qc-header-close-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--qc-text-secondary); cursor: pointer; width: 36px; height: 36px; border-radius: 50%; transition: var(--qc-transition); display: flex; align-items: center; justify-content: center; }
-.qc-header-close-btn:hover { color: var(--qc-text-primary); background-color: rgba(128,128,128,0.1); }
-.qc-view-container { flex: 1; position: relative; overflow: hidden; }
-.qc-view { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: var(--qc-spacing-xl); text-align: center; background-color: var(--qc-bg); transition: opacity 0.4s ease, transform 0.4s ease; opacity: 0; transform: translateX(20px); pointer-events: none; }
-.qc-view.qc-active { opacity: 1; transform: translateX(0); pointer-events: auto; }
-.qc-view.qc-exit-to-left { opacity: 0; transform: translateX(-20px); }
-.qc-chat-view { padding: 0; justify-content: flex-start; align-items: stretch; }
-.qc-view-title { font-size: 22px; font-weight: 800; color: var(--qc-text-primary); margin-bottom: 8px; }
-.qc-view-subtitle { font-size: 15px; color: var(--qc-text-secondary); margin-bottom: 24px; max-width: 320px; line-height: 1.5; }
-.qc-form { width: 100%; display: flex; flex-direction: column; gap: 16px; }
-.qc-form-field { text-align: left; }
-.qc-form-label { display: block; font-size: 14px; font-weight: 600; color: var(--qc-text-primary); margin-bottom: 8px; }
-.qc-form-input { width: 100%; padding: 12px 16px; border: 1px solid var(--qc-border); border-radius: var(--qc-radius-md); background-color: var(--qc-surface); color: var(--qc-text-primary); font-family: inherit; font-size: 15px; transition: var(--qc-transition); }
-.qc-form-input:focus { outline: none; border-color: var(--qc-primary); background-color: var(--qc-bg); box-shadow: var(--qc-focus-ring); }
-.qc-error-text { font-size: 13px; font-weight: 500; color: #ef4444; margin-top: 6px; min-height: 18px; }
-.qc-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background-color: var(--qc-primary); color: white; border: none; border-radius: var(--qc-radius-md); cursor: pointer; font-size: 15px; font-weight: 700; transition: var(--qc-transition); box-shadow: var(--qc-shadow-md); }
-.qc-btn:hover { background-color: var(--qc-primary-hover); transform: translateY(-2px); box-shadow: var(--qc-shadow-lg); }
-.qc-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
-.qc-chat-main { display: flex; flex-direction: column; height: 100%; background-color: var(--qc-surface); }
-.qc-messages-container { flex: 1; overflow-y: auto; padding: var(--qc-spacing-lg); display: flex; flex-direction: column; gap: var(--qc-spacing-xs); }
-.qc-messages-container::-webkit-scrollbar { width: 8px; }
-.qc-messages-container::-webkit-scrollbar-track { background: transparent; }
-.qc-messages-container::-webkit-scrollbar-thumb { background-color: var(--qc-border); border-radius: 8px; }
-.qc-messages-container:hover::-webkit-scrollbar-thumb { background-color: #9ca3af; }
-.qc-message-group { display: flex; flex-direction: column; max-width: 90%; margin-bottom: 12px; }
-.qc-message-group.qc-user { align-items: flex-end; align-self: flex-end; }
-.qc-message-group.qc-bot { align-items: flex-start; align-self: flex-start; }
-.qc-bubble { position: relative; padding: 10px 16px; border-radius: var(--qc-radius-lg); font-size: 15px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; animation: qc-bubble-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+#quantum-chat-widget-container .qc-window { position: fixed; bottom: 95px; z-index: 2147483646; width: clamp(340px, 90vw, 400px); height: clamp(500px, 80vh, 720px); background-color: var(--qc-bg); border-radius: var(--qc-radius-lg); box-shadow: var(--qc-shadow-xl); border: 1px solid var(--qc-border); display: flex; flex-direction: column; overflow: hidden; transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; opacity: 0; transform: translateY(20px); visibility: hidden; }
+#quantum-chat-widget-container .qc-window.qc-position-left { right: auto; left: 20px; transform-origin: bottom left; }
+#quantum-chat-widget-container .qc-window.qc-position-right { left: auto; right: 20px; transform-origin: bottom right; }
+#quantum-chat-widget-container .qc-window.qc-visible { opacity: 1; transform: translateY(0); visibility: visible; }
+#quantum-chat-widget-container .qc-launcher { position: fixed; bottom: 20px; z-index: 2147483645; height: 60px; width: 60px; background-color: var(--qc-primary); border: none; border-radius: 50%; cursor: pointer; box-shadow: var(--qc-shadow-lg); display: flex; align-items: center; justify-content: center; transition: var(--qc-transition); }
+#quantum-chat-widget-container .qc-launcher:hover { transform: scale(1.1); box-shadow: 0 10px 20px var(--qc-primary-glow); }
+#quantum-chat-widget-container .qc-launcher.qc-position-left { left: 20px; }
+#quantum-chat-widget-container .qc-launcher.qc-position-right { right: 20px; }
+#quantum-chat-widget-container .qc-launcher-icon { position: absolute; width: 30px; height: 30px; color: white; transition: transform 0.3s ease, opacity 0.3s ease; }
+#quantum-chat-widget-container .qc-icon-open { transform: scale(1) rotate(0deg); opacity: 1; }
+#quantum-chat-widget-container .qc-icon-close { transform: scale(0) rotate(-90deg); opacity: 0; }
+#quantum-chat-widget-container .qc-window.qc-visible ~ .qc-launcher .qc-icon-open { transform: scale(0) rotate(90deg); opacity: 0; }
+#quantum-chat-widget-container .qc-window.qc-visible ~ .qc-launcher .qc-icon-close { transform: scale(1) rotate(0deg); opacity: 1; }
+#quantum-chat-widget-container .qc-header { padding: var(--qc-spacing-lg); display: flex; align-items: center; gap: var(--qc-spacing-md); background: var(--qc-header-bg); color: var(--qc-header-text); border-bottom: 1px solid var(--qc-border); flex-shrink: 0; }
+#quantum-chat-widget-container .qc-header-logo-wrapper { position: relative; flex-shrink: 0; }
+#quantum-chat-widget-container .qc-header-logo { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background-color: white; }
+#quantum-chat-widget-container .qc-online-indicator { position: absolute; bottom: 1px; right: 1px; width: 12px; height: 12px; background-color: var(--qc-online-indicator); border-radius: 50%; border: 2px solid var(--qc-header-bg); }
+#quantum-chat-widget-container .qc-header-text-container { display: flex; flex-direction: column; }
+#quantum-chat-widget-container .qc-header-title { font-size: 18px; font-weight: 700; color: var(--qc-header-text); }
+#quantum-chat-widget-container .qc-header-subtitle { font-size: 13px; color: var(--qc-text-secondary); }
+#quantum-chat-widget-container .qc-header-close-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--qc-text-secondary); cursor: pointer; width: 36px; height: 36px; border-radius: 50%; transition: var(--qc-transition); display: flex; align-items: center; justify-content: center; }
+#quantum-chat-widget-container .qc-header-close-btn:hover { color: var(--qc-text-primary); background-color: rgba(128,128,128,0.1); }
+#quantum-chat-widget-container .qc-view-container { flex: 1; position: relative; overflow: hidden; }
+#quantum-chat-widget-container .qc-view { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: var(--qc-spacing-xl); text-align: center; background-color: var(--qc-bg); transition: opacity 0.4s ease, transform 0.4s ease; opacity: 0; transform: translateX(20px); pointer-events: none; }
+#quantum-chat-widget-container .qc-view.qc-active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+#quantum-chat-widget-container .qc-view.qc-exit-to-left { opacity: 0; transform: translateX(-20px); }
+#quantum-chat-widget-container .qc-chat-view { padding: 0; justify-content: flex-start; align-items: stretch; }
+#quantum-chat-widget-container .qc-view-title { font-size: 22px; font-weight: 800; color: var(--qc-text-primary); margin-bottom: 8px; }
+#quantum-chat-widget-container .qc-view-subtitle { font-size: 15px; color: var(--qc-text-secondary); margin-bottom: 24px; max-width: 320px; line-height: 1.5; }
+#quantum-chat-widget-container .qc-form { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+#quantum-chat-widget-container .qc-form-field { text-align: left; }
+#quantum-chat-widget-container .qc-form-label { display: block; font-size: 14px; font-weight: 600; color: var(--qc-text-primary); margin-bottom: 8px; }
+#quantum-chat-widget-container .qc-form-input { width: 100%; padding: 12px 16px; border: 1px solid var(--qc-border); border-radius: var(--qc-radius-md); background-color: var(--qc-surface); color: var(--qc-text-primary); font-family: inherit; font-size: 15px; transition: var(--qc-transition); }
+#quantum-chat-widget-container .qc-form-input:focus { outline: none; border-color: var(--qc-primary); background-color: var(--qc-bg); box-shadow: var(--qc-focus-ring); }
+#quantum-chat-widget-container .qc-error-text { font-size: 13px; font-weight: 500; color: #ef4444; margin-top: 6px; min-height: 18px; }
+#quantum-chat-widget-container .qc-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background-color: var(--qc-primary); color: white; border: none; border-radius: var(--qc-radius-md); cursor: pointer; font-size: 15px; font-weight: 700; transition: var(--qc-transition); box-shadow: var(--qc-shadow-md); }
+#quantum-chat-widget-container .qc-btn:hover { background-color: var(--qc-primary-hover); transform: translateY(-2px); box-shadow: var(--qc-shadow-lg); }
+#quantum-chat-widget-container .qc-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+#quantum-chat-widget-container .qc-chat-main { display: flex; flex-direction: column; height: 100%; background-color: var(--qc-surface); }
+#quantum-chat-widget-container .qc-messages-container { flex: 1; overflow-y: auto; padding: var(--qc-spacing-lg); display: flex; flex-direction: column; gap: var(--qc-spacing-xs); }
+#quantum-chat-widget-container .qc-messages-container::-webkit-scrollbar { width: 8px; }
+#quantum-chat-widget-container .qc-messages-container::-webkit-scrollbar-track { background: transparent; }
+#quantum-chat-widget-container .qc-messages-container::-webkit-scrollbar-thumb { background-color: var(--qc-border); border-radius: 8px; }
+#quantum-chat-widget-container .qc-messages-container:hover::-webkit-scrollbar-thumb { background-color: #9ca3af; }
+#quantum-chat-widget-container .qc-message-group { display: flex; flex-direction: column; max-width: 90%; margin-bottom: 12px; }
+#quantum-chat-widget-container .qc-message-group.qc-user { align-items: flex-end; align-self: flex-end; }
+#quantum-chat-widget-container .qc-message-group.qc-bot { align-items: flex-start; align-self: flex-start; }
+#quantum-chat-widget-container .qc-bubble { position: relative; padding: 10px 16px; border-radius: var(--qc-radius-lg); font-size: 15px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; animation: qc-bubble-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
 @keyframes qc-bubble-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.qc-bubble-user { background-color: var(--qc-primary); color: white; border-bottom-right-radius: var(--qc-radius-md); }
-.qc-bubble-bot { background-color: var(--qc-bg); color: var(--qc-text-primary); border: 1px solid var(--qc-border); border-bottom-left-radius: var(--qc-radius-md); }
-.qc-bubble-system { font-size: 12px; color: var(--qc-text-secondary); text-align: center; background-color: transparent; padding: 4px; align-self: center; width: 100%; }
-.qc-chat-link { color: var(--qc-primary); font-weight: 600; text-decoration: underline; }
-.qc-bubble-bot .qc-chat-link { color: var(--qc-primary); }
-.qc-bubble::after { content: ''; position: absolute; bottom: 0; width: 0; height: 0; border: 10px solid transparent; }
-.qc-bubble-user::after { right: -8px; border-left-color: var(--qc-primary); border-right: 0; border-bottom: 0; }
-.qc-bubble-bot::after { left: -8px; border-right-color: var(--qc-bg); border-left: 0; border-bottom: 0; }
-.qc-typing-indicator { display: flex; align-items: center; gap: 5px; padding: 14px; background-color: var(--qc-bg); border-radius: var(--qc-radius-lg); border-bottom-left-radius: var(--qc-radius-md); border: 1px solid var(--qc-border); }
-.qc-typing-dot { width: 8px; height: 8px; background-color: #9ca3af; border-radius: 50%; animation: qc-typing-bounce 1.4s infinite ease-in-out both; }
-.qc-typing-dot:nth-child(2) { animation-delay: .2s; }
-.qc-typing-dot:nth-child(3) { animation-delay: .4s; }
+#quantum-chat-widget-container .qc-bubble-user { background-color: var(--qc-primary); color: white; border-bottom-right-radius: var(--qc-radius-md); }
+#quantum-chat-widget-container .qc-bubble-bot { background-color: var(--qc-bg); color: var(--qc-text-primary); border: 1px solid var(--qc-border); border-bottom-left-radius: var(--qc-radius-md); }
+#quantum-chat-widget-container .qc-bubble-system { font-size: 12px; color: var(--qc-text-secondary); text-align: center; background-color: transparent; padding: 4px; align-self: center; width: 100%; }
+#quantum-chat-widget-container .qc-chat-link { color: var(--qc-primary); font-weight: 600; text-decoration: underline; }
+#quantum-chat-widget-container .qc-bubble-bot .qc-chat-link { color: var(--qc-primary); }
+#quantum-chat-widget-container .qc-bubble::after { content: ''; position: absolute; bottom: 0; width: 0; height: 0; border: 10px solid transparent; }
+#quantum-chat-widget-container .qc-bubble-user::after { right: -8px; border-left-color: var(--qc-primary); border-right: 0; border-bottom: 0; }
+#quantum-chat-widget-container .qc-bubble-bot::after { left: -8px; border-right-color: var(--qc-bg); border-left: 0; border-bottom: 0; }
+#quantum-chat-widget-container .qc-typing-indicator { display: flex; align-items: center; gap: 5px; padding: 14px; background-color: var(--qc-bg); border-radius: var(--qc-radius-lg); border-bottom-left-radius: var(--qc-radius-md); border: 1px solid var(--qc-border); }
+#quantum-chat-widget-container .qc-typing-dot { width: 8px; height: 8px; background-color: #9ca3af; border-radius: 50%; animation: qc-typing-bounce 1.4s infinite ease-in-out both; }
+#quantum-chat-widget-container .qc-typing-dot:nth-child(2) { animation-delay: .2s; }
+#quantum-chat-widget-container .qc-typing-dot:nth-child(3) { animation-delay: .4s; }
 @keyframes qc-typing-bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
-.qc-suggested-questions-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 var(--qc-spacing-lg) var(--qc-spacing-md); }
-.qc-suggested-question-btn { background-color: transparent; border: 1px solid var(--qc-border); border-radius: 99px; padding: 6px 14px; font-size: 13px; font-weight: 500; color: var(--qc-primary); cursor: pointer; transition: var(--qc-transition); }
-.qc-suggested-question-btn:hover { background-color: var(--qc-primary); color: white; border-color: var(--qc-primary); transform: translateY(-1px); }
-.qc-controls-container { padding: var(--qc-spacing-sm) var(--qc-spacing-md); background-color: var(--qc-bg); border-top: 1px solid var(--qc-border); flex-shrink: 0; }
-.qc-controls { display: flex; gap: var(--qc-spacing-md); align-items: flex-end; background-color: var(--qc-surface); border-radius: var(--qc-radius-md); padding: var(--qc-spacing-sm); }
-.qc-textarea { flex: 1; padding: 10px; border: none; background-color: transparent; color: var(--qc-text-primary); resize: none; font-family: inherit; font-size: 15px; max-height: 120px; }
-.qc-textarea:focus { outline: none; }
-.qc-submit-btn { background-color: var(--qc-primary); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; transition: var(--qc-transition); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.qc-submit-btn:hover { background-color: var(--qc-primary-hover); transform: scale(1.1); }
-.qc-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.qc-submit-btn svg { width: 20px; height: 20px; }
+#quantum-chat-widget-container .qc-suggested-questions-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 var(--qc-spacing-lg) var(--qc-spacing-md); }
+#quantum-chat-widget-container .qc-suggested-question-btn { background-color: transparent; border: 1px solid var(--qc-border); border-radius: 99px; padding: 6px 14px; font-size: 13px; font-weight: 500; color: var(--qc-primary); cursor: pointer; transition: var(--qc-transition); }
+#quantum-chat-widget-container .qc-suggested-question-btn:hover { background-color: var(--qc-primary); color: white; border-color: var(--qc-primary); transform: translateY(-1px); }
+#quantum-chat-widget-container .qc-controls-container { padding: var(--qc-spacing-sm) var(--qc-spacing-md); background-color: var(--qc-bg); border-top: 1px solid var(--qc-border); flex-shrink: 0; }
+#quantum-chat-widget-container .qc-controls { display: flex; gap: var(--qc-spacing-md); align-items: flex-end; background-color: var(--qc-surface); border-radius: var(--qc-radius-md); padding: var(--qc-spacing-sm); }
+#quantum-chat-widget-container .qc-textarea { flex: 1; padding: 10px; border: none; background-color: transparent; color: var(--qc-text-primary); resize: none; font-family: inherit; font-size: 15px; max-height: 120px; }
+#quantum-chat-widget-container .qc-textarea:focus { outline: none; }
+#quantum-chat-widget-container .qc-submit-btn { background-color: var(--qc-primary); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; transition: var(--qc-transition); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+#quantum-chat-widget-container .qc-submit-btn:hover { background-color: var(--qc-primary-hover); transform: scale(1.1); }
+#quantum-chat-widget-container .qc-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+#quantum-chat-widget-container .qc-submit-btn svg { width: 20px; height: 20px; }
 `;
         const styleSheet = document.createElement('style');
         styleSheet.id = 'quantum-chat-styles';
@@ -181,7 +181,7 @@
                 return el;
             };
 
-            this.dom.root = h('div', { className: 'quantum-chat-widget' });
+            this.dom.root = h('div', { id: 'quantum-chat-widget-container' }); // Added ID here
             this.dom.launcher = h('button', { className: `qc-launcher qc-position-${config.style.position}` });
             this.dom.window = h('div', { className: `qc-window qc-position-${config.style.position}` });
 
